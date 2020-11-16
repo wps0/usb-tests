@@ -7,7 +7,6 @@
 
 void clock_setup(void);
 void usart_setup(void);
-void uart_puts(char *);
-void uart_putln(char *);
+void systick_setup(void);
 
 #endif //USB_TESTS_SETUP_H
