@@ -14,9 +14,8 @@
 void clock_setup(void) {
     rcc_clock_setup_hsi(&rcc_hsi_configs[RCC_CLOCK_HSI_64MHZ]);
 
-    /* Enable GPIOA clock. */
+    /* Enable GPIOA clock */
     rcc_periph_clock_enable(RCC_GPIOA);
-
     // Enable the clock for USART2
     rcc_periph_clock_enable(RCC_USART2);
 }

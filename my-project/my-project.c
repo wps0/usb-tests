@@ -53,15 +53,16 @@ int main(void) {
     gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5);
 
     systick_setup();
+    usart_setup();
 
     // Now, let's forever toggle this LED back and forth
     while (1) {
-        gpio_toggle(GPIOA, GPIO5);
-        delay(1000);
         uart_putln("Zapalam");
         gpio_toggle(GPIOA, GPIO5);
         delay(1000);
         uart_putln("Gasze");
+        gpio_toggle(GPIOA, GPIO5);
+        delay(1000);
     }
 
 }
