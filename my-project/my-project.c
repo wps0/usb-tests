@@ -7,6 +7,7 @@
 
 // #include "libopencm3/usb/hid.h"
 #include <stdint.h>
+#include <stdio.h>
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/cm3/systick.h>
@@ -21,8 +22,6 @@ static void systick_setup(void) {
     // Set the systick clock source to our main clock
     systick_set_clocksource(STK_CSR_CLKSOURCE_AHB);
     // Clear the Current Value Register so that we start at 0
-    // To jest ten reload register?
-    // Cały kod źródłowy tego: STK_CVR = 0;
     systick_clear();
     // In order to trigger an interrupt every millisecond, we can set the reload
     // value to be the speed of the processor / 1000 - 1
@@ -59,8 +58,10 @@ int main(void) {
     while (1) {
         gpio_toggle(GPIOA, GPIO5);
         delay(1000);
+        uart_putln("Zapalam");
         gpio_toggle(GPIOA, GPIO5);
         delay(1000);
+        uart_putln("Gasze");
     }
 
 }
