@@ -18,9 +18,6 @@
 int main(void) {
 	clock_setup();
 
-	// Our test LED is connected to Port A pin 11, so let's set it as output
-    gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5);
-
     systick_setup();
     usart_setup();
 

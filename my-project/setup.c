@@ -80,4 +80,3 @@ void systick_setup(void) {
     // Enable the system tick counter
     systick_counter_enable();
 }
-
