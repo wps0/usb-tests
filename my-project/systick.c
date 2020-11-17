@@ -1,5 +1,4 @@
 #include <stdint.h>
-
 #include <libopencm3/cm3/systick.h>
 
 
