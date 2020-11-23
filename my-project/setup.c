@@ -19,11 +19,13 @@ void clock_setup(void) {
 
     /* Enable GPIOA clock */
     rcc_periph_clock_enable(RCC_GPIOA);
-    // Enable the clock for USART2
+    /* Enable USART2 clock */
     rcc_periph_clock_enable(RCC_USART2);
+    /* Enable USB clock */
+    rcc_periph_clock_enable(RCC_USB);
 }
 
-void usart_setup() {
+void usart_setup(void) {
     // USART2 (AF7):
     //  PA3 - USART2_RX
     //  PA2 - USART2_TX

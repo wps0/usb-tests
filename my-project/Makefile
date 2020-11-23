@@ -2,7 +2,7 @@ PROJECT = olol
 BUILD_DIR = bin
 
 SHARED_DIR = ../my-common-code
-CFILES = my-project.c setup.c systick.c uart.c
+CFILES = my-project.c setup.c systick.c uart.c usb.c
 
 # TODO - you will need to edit these two lines!
 DEVICE=stm32f303re
