@@ -23,6 +23,7 @@ void clock_setup(void) {
 
     /* Enable GPIOA clock */
     rcc_periph_clock_enable(RCC_GPIOA);
+    rcc_periph_clock_enable(RCC_GPIOC);
     /* Enable USART2 clock */
     rcc_periph_clock_enable(RCC_USART2);
     /* Enable USB clock */

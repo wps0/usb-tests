@@ -147,9 +147,9 @@ const struct usb_config_descriptor cfg_descr = {
 	.wTotalLength = 0,
 	.bNumInterfaces = 1,
 	.bConfigurationValue = 1,
-	.iConfiguration = 1,
+	.iConfiguration = 0, // TODO: zmienione z 1
 	.bmAttributes = 0xC0, // nie sprawdzane co to znaczy! TODO: sprawdzic
-	.bMaxPower = 2,
+	.bMaxPower = 0x32,
     .interface = ifaces
 };
 
@@ -178,36 +178,38 @@ static const char *usb_strings[] = {
 // }
 
 
-// static enum usbd_request_return_codes simple_control_callback(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf,
-// 		uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
-// {
-// 	(void)buf;
-// 	(void)len;
-// 	(void)complete;
-// 	(void)usbd_dev;
-// 	printf("usbd_request_return_codes!!\n");
+// static enum usbd_request_return_codes hid_control_request(usbd_devi)
 
-// 	if (req->bmRequestType != 0x40)
-// 		return USBD_REQ_NOTSUPP; /* Only accept vendor request. */
+static enum usbd_request_return_codes simple_control_callback(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf,
+		uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
+{
+	(void)buf;
+	(void)len;
+	(void)complete;
+	(void)usbd_dev;
+	printf("usbd_request_return_codes!!\n");
 
-// 	/*if (req->wValue & 1)
-// 		gpio_set(GPIOA, GPIO5);
-// 	else
-// 		gpio_clear(GPIOA, GPIO5);
+	if (req->bmRequestType != 0x40)
+		return USBD_REQ_NOTSUPP; /* Only accept vendor request. */
 
-// 	return USBD_REQ_HANDLED;
-// }
+	if (req->wValue & 1)
+		gpio_set(GPIOA, GPIO5);
+	else
+		gpio_clear(GPIOA, GPIO5);
 
-// static void usb_set_config_cb(usbd_device *usbd_dev, uint16_t wValue)
-// {
-// 	printf("!!!!!!!!!!!!!!!!!!!!usb_set_config_cb!!\n");
-// 	(void)wValue;
-// 	usbd_register_control_callback(
-// 				usbd_dev,
-// 				USB_REQ_TYPE_VENDOR,
-// 				USB_REQ_TYPE_TYPE,
-// 				simple_control_callback);
-// }
+	return USBD_REQ_HANDLED;
+}
+
+static void usb_set_config_cb(usbd_device *usbd_dev, uint16_t wValue)
+{
+	printf("!!!!!!!!!!!!!!!!!!!!usb_set_config_cb!!\n");
+	(void)wValue;
+	usbd_register_control_callback(
+				usbd_dev,
+				USB_REQ_TYPE_VENDOR,
+				USB_REQ_TYPE_TYPE,
+				simple_control_callback);
+}
 
 // static void usb_out_cb(usbd_device *dev, uint8_t ep)
 // {
@@ -223,53 +225,63 @@ static const char *usb_strings[] = {
 // 				__asm__("nop");
 // }
 
-// void usb_setup(void) {
-//     // _usb_gpio_setup();
-//     // 48MHz clock is required to init the USBD!
-//     printf("Creating USB device... ");
-// 	// gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, GPIO12);
-// 	// gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO11);
-//     usbd_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev_descr, &cfg_descr, usb_strings, 3,
-//                         &usbd_control_buffer, sizeof(usbd_control_buffer));
-// 	assert(usbd_dev != NULL);
-//     printf("OK\n");
 
-// 	printf("Updating USB config callback... ");
-//     // usbd_register_set_config_callback(usbd_dev, usb_set_config_cb);
-//     printf("OK\n");
-	
-// 	// printf("usbd_dev address: 0x%X\n", usbd_dev);
-
-//     /* LED output */
-//     printf("Changing PA5 (GPIOA/GPIO5) mode... ");
-// 	gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, GPIO5);
-//     // gpio_set_output_options()
-//     printf("OK\n");
-
-
-// 	/* Delay some seconds to show that pull-up switch works. */
-// 	printf("Delay some seconds to show that pull-up switch works...\n");
-// 	for (int i = 0; i < 0x800000; i++)
-// 		__asm__("nop");
-
-// 	/* Wait for USB Vbus. */
-// 	printf("Wait for USB Vbus...\n");
-// 	// while (gpio_get(GPIOA, GPIO11) == 0 || gpio_get(GPIOA, GPIO12) == 0)
-// 		// __asm__("nop");
-
-// 	printf("Polling usbd_dev\n");
-//     while (1) {
-// 		for (int i = 0; i < 128; i++)
-// 			printf("%d", usbd_control_buffer[i]);
-// 		printf("\n");
-// 		usbd_poll(usbd_dev);
-// 		// for (int i = 0; i < 0x200000; i++)
-// 		// __asm__("nop");
-//     }
-// }
-
+usbd_device *usb_dev;
 /* Buffer to be used for control requests. */
 uint8_t usbd_control_buffer[128];
+
+void usb_setup(void) {
+    // _usb_gpio_setup();
+    // 48MHz clock is required to init the USBD!
+    printf("Creating USB device... ");
+	// gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLUP, GPIO12);
+	// gpio_mode_setup(GPIOA, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO11);
+    usb_dev = usbd_init(&st_usbfs_v1_usb_driver, &dev_descr, &cfg_descr, usb_strings, 3,
+                        &usbd_control_buffer, sizeof(usbd_control_buffer));
+	assert(usb_dev != NULL);
+    printf("OK\n");
+
+	printf("Updating USB config callback... ");
+    usbd_register_set_config_callback(usb_dev, usb_set_config_cb);
+    printf("OK\n");
+	
+	// printf("usbd_dev address: 0x%X\n", usbd_dev);
+
+    /* LED output */
+    printf("Changing PC5 (GPIOC/GPIO5) mode... ");
+	gpio_mode_setup(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO5);
+    printf("OK\n");
+
+
+	/* Delay some seconds to show that pull-up switch works. */
+	printf("Delay some seconds to show that pull-up switch works...\n");
+	for (int i = 0; i < 0x800000; i++)
+		__asm__("nop");
+	
+	printf("%d\n", gpio_get(GPIOC, GPIO5));
+	
+	// gpio_clear(GPIOC, GPIO5);
+	// delay(800);
+	gpio_set(GPIOC, GPIO5);
+	printf("%d\n", gpio_get(GPIOC, GPIO5));
+
+	/* Wait for USB Vbus. */
+	printf("Wait for USB Vbus...\n");
+	while (gpio_get(GPIOC, GPIO5) == 0)
+		__asm__("nop");
+	printf(">%d\n", gpio_get(GPIOC, GPIO5));
+
+	printf("Polling usbd_dev\n");
+    while (1) {
+		// for (int i = 0; i < 128; i++)
+			// printf("%d", usbd_control_buffer[i]);
+		// printf("\n");
+		usbd_poll(usb_dev);
+		// for (int i = 0; i < 0x200000; i++)
+		// __asm__("nop");
+    }
+}
+
 
 static enum usbd_request_return_codes cdcacm_control_request(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf,
 		uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
@@ -349,8 +361,7 @@ static void _usb_setup(void)
 	// gpio_set_af(GPIOA, GPIO_AF14, GPIO11 | GPIO12);
 }
 
-usbd_device *usbd_dev;
-void usb_setup(void)
+/*void usb_setup(void)
 {
 	printf("RCC clock setup...\n");
 	//rcc_clock_setup_pll(&rcc_hse8mhz_configs[RCC_CLOCK_HSE8_72MHZ]);
@@ -370,4 +381,4 @@ void usb_setup(void)
 	while (1) {
 		usbd_poll(usbd_dev);
 	}
-}
+}*/
