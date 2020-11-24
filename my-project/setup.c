@@ -2,6 +2,10 @@
 // Created by piotr on 16.11.2020.
 //
 
+#ifndef STM32F3
+#define STM32F3
+#endif
+
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
 #include <libopencm3/stm32/usart.h>
