@@ -8,6 +8,7 @@
 
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/gpio.h>
+#include <libopencm3/cm3/nvic.h>
 #include <libopencm3/stm32/usart.h>
 #include <libopencm3/cm3/systick.h>
 
@@ -19,15 +20,14 @@
 #include "uart.h"
 
 void clock_setup(void) {
-    rcc_clock_setup_hsi(&rcc_hsi_configs[RCC_CLOCK_HSI_64MHZ]);
-
+    rcc_clock_setup_pll(&rcc_hse8mhz_configs[RCC_CLOCK_HSE8_72MHZ]);
     /* Enable GPIOA clock */
     rcc_periph_clock_enable(RCC_GPIOA);
+    /* Enable USB clock */
+    rcc_periph_clock_enable(RCC_USB); // chociaż i tak jest setupowany w usbd_init
     rcc_periph_clock_enable(RCC_GPIOC);
     /* Enable USART2 clock */
     rcc_periph_clock_enable(RCC_USART2);
-    /* Enable USB clock */
-    rcc_periph_clock_enable(RCC_USB);
 }
 
 void usart_setup(void) {
@@ -86,4 +86,10 @@ void systick_setup(void) {
     systick_interrupt_enable();
     // Enable the system tick counter
     systick_counter_enable();
+}
+
+void interrupts_setup(void) {
+    /* Enable USB RX interrupt */
+    // nvic_enable_irq(NVIC_USB_HP_CAN1_TX_IRQ);
+    // nvic_enable_irq(NVIC_USB_LP_CAN1_RX0_IRQ);
 }

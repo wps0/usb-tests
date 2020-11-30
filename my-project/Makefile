@@ -1,4 +1,4 @@
-PROJECT = olol
+PROJECT = usbtest
 BUILD_DIR = bin
 
 SHARED_DIR = ../my-common-code

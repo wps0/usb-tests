@@ -8,5 +8,6 @@
 void clock_setup(void);
 void usart_setup(void);
 void systick_setup(void);
+void interrupts_setup(void);
 
 #endif //USB_TESTS_SETUP_H
